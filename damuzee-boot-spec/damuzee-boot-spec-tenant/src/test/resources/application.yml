@@ -1,0 +1,7 @@
+#默认加载profile
+spring:
+  profiles:
+    active: local-redis,embed-redis
+logging:
+  level:
+    root: debug

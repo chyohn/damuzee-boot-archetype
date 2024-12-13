@@ -1,0 +1,4 @@
+damuzee:
+  jackson:
+    defaultPropertyInclusion: ALWAYS
+

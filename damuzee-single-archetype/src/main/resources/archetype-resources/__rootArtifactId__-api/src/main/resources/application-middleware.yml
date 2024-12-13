@@ -1,0 +1,19 @@
+damuzee:
+  ddc:
+    enabled: false
+  dmg:
+    rocket:
+      producer:
+        enabled: false
+      consumer:
+        group: xxx
+        enabled: false
+  dsf:
+    application:
+      owner: xxxx
+    provider:
+      enabled: true
+
+
+
+

@@ -1,0 +1,147 @@
+spring:
+  autoconfigure:
+    exclude:
+      #使用sharding分表,无法使用druid-boot-start自动注入,排除DruidDataSourceAutoConfigure
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      # 不使用动态数据源时排除DynamicDataSourceAutoConfiguration
+      - com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration
+      # 不使用Redisson时排除TenantRedissonAutoConfiguration
+      #- com.damuzee.boot.spec.tenant.redisson.TenantRedissonAutoConfiguration
+  # sharding jdbc
+  shardingsphere:
+    enabled:
+    mode:
+      type: Memory
+    props:
+      sql:
+        #设置sql是否展示
+        show: false
+      check:
+        table:
+          metadata:
+            enable: false
+      max:
+        connections:
+          size:
+            per:
+              query: 10
+
+    datasource:
+      #数据库名称
+      names: ds0
+      ds0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://${db.mysql.xxxdatabase.rw.host}:${db.mysql.xxxdatabase.rw.port}/${db.mysql.xxxdatabase.rw.db}?serverTimezone=GMT%2b8&characterEncoding=UTF-8&autoReconnect=true&allowMultiQueries=true&rewriteBatchedStatements=true&useSSL=false&connectTimeout=2000&socketTimeout=150000
+        username: ${db.mysql.database.rw.user}
+        password: ${db.mysql.database.rw.password}
+        initialSize: 4
+        minIdle: 4
+        maxActive: 20
+        maxWait: 30000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: false
+        maxPoolPreparedStatementPerConnectionSize: -1
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        useGlobalDataSourceStat: true
+    rules:
+      sharding:
+        tables:
+          #逻辑表名
+          table_xxxx2:
+            actual-data-nodes: ds0.table_xxxx2_00$->{0..9}$->{0..9}
+            table-strategy:
+              standard:
+                sharding-column: _tenant_id
+                sharding-algorithm-name: common-tenant-id-mod
+          #逻辑表名
+          table_xxxx2:
+            actual-data-nodes: ds0.table_xxxx2_00$->{0..9}$->{0..9}
+            table-strategy:
+              standard:
+                sharding-column: _group_id
+                sharding-algorithm-name: common-group-id-mod
+        sharding-algorithms:
+          common-tenant-id-mod:
+            type: MOD
+            props:
+              sharding-count: 100
+              zero-padding: true
+          common-group-id-mod:
+            type: MOD
+            props:
+              sharding-count: 100
+              zero-padding: true
+
+
+  # REDIS配置
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 0
+    # Redis服务器地址
+    host: ${db.redis.0.host}
+    # Redis服务器连接端口
+    port: ${db.redis.0.port}
+    # Redis服务器连接密码（默认为空）
+    password: ${db.redis.0.password}
+    # 连接超时时间（毫秒）
+    timeout: 30000
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        # 连接池中的最小空闲连接
+        min-idle: 8
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 10000
+
+mybatis-plus:
+  # 自定义mapper配置文件存放路径
+  mapper-locations: classpath*:mapper/*.xml
+  # 扫描此包下pojo类生成短别名,在xml中可以使用类名,不用输全路径类名
+  type-aliases-package: "**.infra.dao.entity"
+  # 此包下的类会由SqlSessionFactoryBean注册成TypeHandler
+  type-handlers-package:
+  global-config:
+    # 数据库配置
+    db-config:
+      # 默认值是ID_WORKER(框架生成的分布式唯一ID,Long型),其他选项AUTO(数据库自增),INPUT(自定义),UUID(框架生成uuid),ID_WORKER_STR(框架生成的分布式唯一ID,String型)
+      id-type: auto
+      # 字段策略：涉及insert,update及wrapper内部的entity属性生成的where条件;有4个选项IGNORED(不判断),NOT_NULL(非null即可),NOT_EMPTY(非null且非空串),DEFAULT(非null即可)
+      # 比如User对象name是""空串,调用insert接口,IGNORED会插入空串,NOT_NULL会插入空串,NOT_EMPTY不会插入name字段
+      insert-strategy: NOT_EMPTY
+      update-strategy: NOT_EMPTY
+      select-strategy: NOT_EMPTY
+      # 统一设置表前缀
+      #table-prefix: 表前缀_
+
+
+damuzee:
+  #租户插件配置,mysql + redis
+  tenant:
+    #redis 租户插件
+    redis:
+      key:
+        # redis 前缀开关控制,便于统一管理配置,开启后,前缀规则: 工程前缀+租户id
+        enabled: true
+        #工程redis前缀,自定义
+        prefix: damuzee-todo
+        #key 白名单,不会自动增加前缀
+        white-list:
+        # - todo1
+        # - todo2
+    #mysql 租户插件
+    db:
+      # 设置租户字段，租户端默认为_tenant_id, 集团端默认为_group_id
+      column: _tenant_id
+      # 忽略自动拼接租户字段的表,可以输入多个
+      ignoreTables:
+      #  - table1
+      #  - table2

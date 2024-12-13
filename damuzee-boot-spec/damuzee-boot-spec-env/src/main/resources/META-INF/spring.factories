@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.damuzee.boot.spec.env.config.EnvironmentAutoConfiguration

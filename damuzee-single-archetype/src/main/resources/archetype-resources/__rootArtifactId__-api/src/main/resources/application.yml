@@ -1,0 +1,25 @@
+#默认加载profile
+spring:
+  profiles:
+    active: app,dao,middleware
+    # [可选]配置,自行判断是否使用Spring Cache注解(@Cacheable 等)选项,如果不启用,在启动类上注释: @EnableCaching
+  cache:
+    type: redis
+    #应用程序启动创建缓存的名称，必须将所有注释为@Cacheable缓存name（或value）罗列在这里
+    cache-names:
+    #      - todo
+    redis:
+      #例如10分钟
+      timeToLive: 600000
+  # 默认为false。如果开启的话在事务真正物理提交doCommit失败后会进行回滚。
+  transaction:
+    rollback-on-commit-failure: true
+# 默认tomcat启动端口
+server:
+  port: 8080
+# Spring Actuator 主动禁用
+endpoints:
+  enabled: false
+# 自定义文件，详情请见:https://blog.csdn.net/AaronSimon/article/details/82710792
+logging:
+  config: classpath:logback-custom.xml

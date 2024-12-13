@@ -1,0 +1,5 @@
+log:
+  additivity: false
+  level: INFO
+  sql:
+    level: INFO

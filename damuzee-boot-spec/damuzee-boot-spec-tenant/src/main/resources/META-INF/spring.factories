@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.damuzee.boot.spec.tenant.jdbc.sql.MybatisTenantAutoConfiguration,\
+  com.damuzee.boot.spec.tenant.redis.RedisTenantAutoConfiguration,\
+  com.damuzee.boot.spec.tenant.redisson.TenantRedissonAutoConfiguration
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+  com.damuzee.boot.spec.tenant.redisson.RedissonAutoConfigurationImportFilter

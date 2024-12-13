@@ -1,0 +1,72 @@
+#set( $symbol_pound = '#' )
+  #set( $symbol_dollar = '$' )
+  #set( $symbol_escape = '\' )
+  <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property name="localDateTime" value="%d{yyyy-MM-dd}"/>
+  <property name="logPattern" value="[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%c] [%X{tid}] [%X{prefix}] - %m%n"/>
+  <property name="charSet" value="UTF-8"/>
+  <property name="maxHistory" value="7"/>
+
+
+  <springProperty scope="context" name="log.additivity" source="log.additivity"/>
+  <springProperty scope="context" name="log.sql.level" source="log.sql.level"/>
+  <springProperty scope="context" name="log.level" source="log.level"/>
+
+  <property name="logPath"
+            value="/web/logs/app/${symbol_dollar}{AMP_PRO_CODE}/${symbol_dollar}{AMP_APP_CODE}"/>
+
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${symbol_dollar}{logPattern}</pattern>
+    </encoder>
+  </appender>
+
+
+  <!-- 应用层日志 api -->
+  <appender name="api" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${symbol_dollar}{logPath}/damuzee_api.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${symbol_dollar}{logPath}/damuzee_api.log.${symbol_dollar}{localDateTime}</fileNamePattern>
+      <maxHistory>${symbol_dollar}{maxHistory}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${symbol_dollar}{logPattern}</pattern>
+      <charset>${symbol_dollar}{charSet}</charset>
+    </encoder>
+  </appender>
+  <appender name="aysnc_api" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>512</queueSize>
+    <appender-ref ref="api"/>
+  </appender>
+
+  <appender name="shardingsphere" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${symbol_dollar}{logPath}/shardingsphere.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${symbol_dollar}{logPath}/shardingsphere.log.${symbol_dollar}{localDateTime}</fileNamePattern>
+      <maxHistory>${symbol_dollar}{maxHistory}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${symbol_dollar}{logPattern}</pattern>
+      <charset>${symbol_dollar}{charSet}</charset>
+    </encoder>
+  </appender>
+  <appender name="aysnc_shardingsphere" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>512</queueSize>
+    <appender-ref ref="shardingsphere"/>
+  </appender>
+  <logger name="org.apache.shardingsphere" level="${symbol_dollar}{log.sql.level}" additivity="false">
+    <appender-ref ref="aysnc_shardingsphere"/>
+  </logger>
+
+
+  <root level="${symbol_dollar}{log.level}">
+    <!--打印三方日志-->
+    <appender-ref ref="aysnc_api"/>
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>

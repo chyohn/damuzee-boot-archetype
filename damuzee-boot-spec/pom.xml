@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <parent>
+    <groupId>com.damuzee</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+    <artifactId>damuzee-boot-parent</artifactId>
+    <relativePath/>
+  </parent>
+
+  <description>规范：公共实现</description>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.damuzee</groupId>
+  <artifactId>damuzee-boot-spec</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+  </properties>
+
+  <modules>
+    <module>damuzee-boot-spec-env</module>
+    <module>damuzee-boot-spec-jackson</module>
+    <module>damuzee-boot-spec-result</module>
+    <module>damuzee-boot-spec-util</module>
+    <module>damuzee-boot-spec-tenant</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.damuzee</groupId>
+        <artifactId>damuzee-boot-spec-util</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.damuzee</groupId>
+        <artifactId>damuzee-boot-spec-jackson</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.damuzee</groupId>
+        <artifactId>damuzee-boot-spec-result</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.damuzee</groupId>
+        <artifactId>damuzee-boot-spec-tenant</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.damuzee</groupId>
+        <artifactId>damuzee-boot-spec-env</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.8.0</version>
+      <configuration>
+        <source>${maven.compiler.source}</source>
+        <target>${maven.compiler.target}</target>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>3.0.1</version>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <phase>install</phase>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+  </build>
+
+</project>
